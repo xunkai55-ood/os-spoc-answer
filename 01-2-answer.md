@@ -34,4 +34,17 @@
 
 内存地址为32位，前10位对应页表，中间10位对应页表中的entry，后12位为offset，即每页大小为4096
 
+### 请编写一个小程序，在v9-cpu下，能够接收你输入的字符并输出你输入的字符
+
+[v9_1.c](https://github.com/xunkai55/os-spoc-answer/blob/master/01-2-answer/v9_1.c)
+
+### 请编写一个小程序，在v9-cpu下，能够产生各种异常/中断
+　
+[v9_2.c](https://github.com/xunkai55/os-spoc-answer/blob/master/01-2-answer/v9_2.c)
+　
+### 请编写一个小程序，在v9-cpu下，能够统计并显示内存大小
+
+[v9_3.c](https://github.com/xunkai55/os-spoc-answer/blob/master/01-2-answer/v9_3.c)
+
+
 
