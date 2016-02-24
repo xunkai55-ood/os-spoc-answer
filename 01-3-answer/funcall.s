@@ -55,7 +55,7 @@ funcall.c  12:   int i;
 funcall.c  13:   ret = 1;
 00000010  fffff801  ENT   0xfffffff8 (D -8)
 00000014  00000123  LI    0x1 (D 1)
-00000018  00000045  SG    0x0 (D 0)
+00000018  00000045  SG    0x0 (D 0)  // 通过寄存器写入立即数
 funcall.c  14:   i=n;
 0000001c  0000200e  LL    0x20 (D 32)
 00000020  00000440  SL    0x4 (D 4)
@@ -66,7 +66,7 @@ funcall.c  16:     out(f, *s++);
 0000002c  ffffff57  SUBI  0xffffffff (D -1)
 00000030  00001840  SL    0x18 (D 24)
 00000034  ffffff1f  LXC   0xffffffff (D -1)
-00000038  0000009d  PSHA
+00000038  0000009d  PSHA  // 以上几行，依次压入s和f
 0000003c  0000180e  LL    0x18 (D 24)
 00000040  0000009d  PSHA
 00000044  ffffb805  JSR   0xffffffb8 (TO 0x0)
@@ -75,9 +75,9 @@ funcall.c  17:   return i;
 0000004c  0000040e  LL    0x4 (D 4)
 00000050  00000157  SUBI  0x1 (D 1)
 00000054  00000440  SL    0x4 (D 4)
-00000058  00000154  ADDI  0x1 (D 1)
+00000058  00000154  ADDI  0x1 (D 1)  // 这里是判断循环终止，不是return i
 0000005c  00000086  BNZ   <fwd>
-00000060  0000040e  LL    0x4 (D 4)
+00000060  0000040e  LL    0x4 (D 4)  // 将返回值放入寄存器a
 00000064  00000802  LEV   0x8 (D 8)
 funcall.c  18: }  
 funcall.c  19: 
@@ -89,9 +89,9 @@ funcall.c  23:   //Change S1/S2 ID to your student ID, and change 12 to new str 
 funcall.c  24:   ret = write(1, "2012011486 2012013290", 22);
 0000006c  0000169e  PSHI  0x16 (D 22)
 00000070  00000008  LEAG  0x0 (D 0)
-00000074  0000009d  PSHA
-00000078  0000019e  PSHI  0x1 (D 1)
-0000007c  ffff9005  JSR   0xffffff90 (TO 0x10)
+00000074  0000009d  PSHA  // 压入22和计算出的字符串地址
+00000078  0000019e  PSHI  0x1 (D 1) // 压入所有参数
+0000007c  ffff9005  JSR   0xffffff90 (TO 0x10) // 调用
 00000080  00001801  ENT   0x18 (D 24)
 00000084  00000045  SG    0x0 (D 0)
 funcall.c  25:   asm(HALT);

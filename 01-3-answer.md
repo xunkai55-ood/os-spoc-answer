@@ -14,7 +14,7 @@ c代码见 [funcall.c](01-3-answer/funcall.c)
 
 #### funcall中的堆栈有多大？是内核态堆栈还是用户态堆栈
 
-使用xem进行调试，显示寄存器，可以看到user位为0，是内核态；tsp为0x10038，current sp为0x7c00000，则整个的栈大小是
+使用xem进行调试，显示寄存器，可以看到user位为0，是内核态；tsp为0x10038，current sp为0x7c00000，则整个的栈大小约是124MB
 
 #### funcall中的全局变量ret放在内存中何处？如何对它寻址？
 
@@ -47,4 +47,11 @@ c代码见 [funcall.c](01-3-answer/funcall.c)
 返回值传递：返回值放在寄存器a中。
 
 #### 分析并说明funcall执行文件的格式和内容 　
+
++ 00000000~00000003: Magic Number 0xC0DEF00D
++ 00000004~00000007: bss
++ 00000008~0000000b: entry
++ 0000000c~0000000f: flags
++ 00000010~0000009c: codes
++ 000000a0~000000b4: string literal
 
