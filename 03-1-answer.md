@@ -2,7 +2,7 @@
 
 实现了最简单的first-fit算法。
 
-代码在[malloc.c](malloc.c)。
+代码在[malloc.c](03-1-answer/malloc.c)。
 
 ### 设计思路
 
