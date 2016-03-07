@@ -42,8 +42,10 @@ char* ff_malloc(size_t size) {
 		} else if (p->size >= size) {  // remove p from free list
 			if (q == NULL) { // update head
 				free_list = p->next;
-				return __heap + p->start;
+			} else {
+				q->next = p->next;
 			}
+			return __heap + p->start;
 		} else {
 			q = p;
 			p = p->next;
