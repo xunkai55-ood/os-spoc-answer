@@ -1,17 +1,16 @@
 class PageFaultRate:
     def __init__(self, window_size):
         self.window_size = window_size
-        self.history = []
+        self.cache = []
         self.last_fault = 0
         self.current = -1
-        self.mem = []
+        self.mem = set()
 
     def access(self, addr):
-        self.history.append(addr)
+        self.cache.append(addr)
         self.current += 1
-        if len(self.history) > self.window_size + 1:
-            del self.history[0]
-
+        if len(self.cache) > self.window_size + 1:
+            self.cache = self.cache[1:]
         hit = True
         if addr not in self.mem:
             hit = False
@@ -19,19 +18,19 @@ class PageFaultRate:
             self.last_fault = self.current
 
             if delta <= self.window_size:
-                self.mem.append(addr)
+                self.mem.add(addr)
             else:
-                new_mem = []
-                for i in self.mem:
-                    if i in self.history:
-                        new_mem.append(i)
+                new_mem = set()
+                for i in self.cache:
+                    if i in self.mem:
+                        new_mem.add(i)
                 self.mem = new_mem
-                self.mem.append(addr)
+                self.mem.add(addr)
         self.display(addr, hit)
 
     def display(self, addr, hit):
         print "H" if hit else "M", addr, "|| now:",
-        for i in self.history:
+        for i in self.cache:
             print i,
         print
 
