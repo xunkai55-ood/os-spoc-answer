@@ -15,20 +15,17 @@ class WorkingSet:
         self.history.append([addr, self.time])
         while self.time - self.history[0][1] >= self.window_size:
             del self.history[0]
-        self.printInfo(addr, hit)
+        self.display(addr, hit)
 
-    def printInfo(self, addr, hit):
-        if hit:
-            print("access " + str(addr) + " (H) " + ":"),
-        else:
-            print("access " + str(addr) + " (M) " + ":"),
+    def display(self, addr, hit):
+        print "H" if hit else "M", addr, "|| now:",
         for i in self.history:
-            print(i[0]),
-        print("")
+            print i[0],
+        print
 
 if __name__ == '__main__':
-    visit_seq = ['a', 'd', 'e', 'c', 'c', 'd', 'b', 'c', 'e', 'c', 'e', 'a', 'd']
-    print("------- Woring Set -------")
+    seq = [1, 2, 3, 4, 2, 3, 3, 5, 4, 2, 1]
+    print "------- Woring Set -------"
     ws = WorkingSet(4)
-    for addr in visit_seq:
+    for addr in seq:
         ws.access(addr)

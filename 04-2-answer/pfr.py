@@ -27,21 +27,18 @@ class PageFaultRate:
                         new_mem.append(i)
                 self.mem = new_mem
                 self.mem.append(addr)
-        self.printInfo(addr, hit)
+        self.display(addr, hit)
 
-    def printInfo(self, addr, hit):
-        if hit:
-            print("access " + str(addr) + " (H) " + ":"),
-        else:
-            print("access " + str(addr) + " (M) " + ":"),
-        for i in self.mem:
-            print(i),
-        print("")
+    def display(self, addr, hit):
+        print "H" if hit else "M", addr, "|| now:",
+        for i in self.history:
+            print i,
+        print
 
 
 if __name__ == '__main__':
-    visit_seq = ['a', 'd', 'e', 'c', 'c', 'd', 'b', 'c', 'e', 'c', 'e', 'a', 'd']
-    print("------- Page Fault Rate -------")
+    seq = [1, 2, 3, 4, 2, 3, 3, 5, 4, 2, 1]
+    print "------- Page Fault Rate -------"
     pfr = PageFaultRate(2)
-    for index in visit_seq:
+    for index in seq:
         pfr.access(index)
