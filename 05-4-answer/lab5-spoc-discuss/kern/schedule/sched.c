@@ -31,6 +31,7 @@ schedule(void) {
     } else {
         last = &(current->list_link);
     }
+    le = last;
     do {
         le = list_next(le);
         if (le != &proc_list) {
