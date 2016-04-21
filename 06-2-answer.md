@@ -10,6 +10,8 @@
 
 ## STRIDE算法输出信息
 
+代码见[lab6](06-2-answer)
+
 ```
 ++ setup timer interrupts
 [pick] pid=1, stride=2147483647
