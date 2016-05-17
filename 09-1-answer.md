@@ -38,4 +38,10 @@ diff output.txt answer.txt
 
 ## 实现soft link机制，并设计测试用例说明你实现的正确性
 
+实现中，增加了`createSoftLink`函数，修改了`writeFile`函数。因为后者在写向软连接时，需要进一步寻找目标文件。最大递归层数设为4，以防出现循环软链接或超长软链接等。
+
+实现了`doSoftLink`代替了`doLink`，用于测试。
+
+代码见[sfs-homework-2.py](09-1-answer/sfs-homework-2.py)
+
 

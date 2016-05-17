@@ -127,7 +127,7 @@ class inode:
         self.setAll(ftype, addr, refCnt)
 
     def setAll(self, ftype, addr, refCnt):
-        assert(ftype == 'd' or ftype == 'f' or ftype == 'free')
+        assert(ftype == 'd' or ftype == 'f' or ftype == 'free' or ftype == "s")
         self.ftype  = ftype
         self.addr   = addr
         self.refCnt = refCnt
@@ -142,7 +142,7 @@ class inode:
         return self.refCnt
 
     def setType(self, ftype):
-        assert(ftype == 'd' or ftype == 'f' or ftype == 'free')
+        assert(ftype == 'd' or ftype == 'f' or ftype == 'free' or ftype == "s")
         self.ftype = ftype
 
     def setAddr(self, block):
@@ -167,6 +167,7 @@ class inode:
 
 class fs:
     def __init__(self, numInodes, numData):
+        self.maxSlIter = 4
         self.numInodes = numInodes
         self.numData   = numData
 
@@ -295,7 +296,7 @@ class fs:
     # DONE
         return tinum
 
-    def createSoftLink(self, parent, newfile, target):
+    def createSoftLink(self, target, newfile, parent):
         p_inum = self.nameToInum[parent]
         p_addr = self.inodes[p_inum].addr
         if self.data[p_addr].getFreeEntries() <= 0:
@@ -311,10 +312,10 @@ class fs:
             return -1
         inode = self.inodes[inum]
         data = self.data[addr]
-        inode.setAll("s", bnum, 1)
+        inode.setAll("s", addr, 1)
         data.setType("s")
-        data.addTarget(target)
-        data.addDirEntry(newfile, inum)
+        data.target = target
+        self.data[p_addr].addDirEntry(newfile, inum)
         self.inodes[p_inum].incRefCnt()
 
     def createFile(self, parent, newfile, ftype):
@@ -359,10 +360,22 @@ class fs:
     # DONE
         return inum
 
-    def writeFile(self, tfile, data):
+    def writeFile(self, tfile, data, iterations=0):
         inum = self.nameToInum[tfile]
         curSize = self.inodes[inum].getSize()
         dprint('writeFile: inum:%d cursize:%d refcnt:%d' % (inum, curSize, self.inodes[inum].getRefCnt()))
+
+        if iterations >= self.maxSlIter:
+            print "too many iterations"
+            return -1
+
+        if self.inodes[inum].getType() == "s":
+            target = self.data[self.inodes[inum].addr].target
+            if target not in self.nameToInum or self.inodes[self.nameToInum[target]].getType() == "free":
+                print "target not found"
+                return -1
+            return self.writeFile(target, data, iterations + 1)
+
 
     # YOUR CODE, 2012013290
         # file is full?
@@ -390,6 +403,32 @@ class fs:
         dfile = self.files[int(random.random() * len(self.files))]
         dprint('try delete(%s)' % dfile)
         return self.deleteFile(dfile)
+
+    def doSoftLink(self):
+        dprint('doSoftLink')
+        if len(self.files) == 0:
+            return -1
+        parent = self.dirs[int(random.random() * len(self.dirs))]
+        nfile = self.makeName()
+
+        # pick random target
+        target = self.files[int(random.random() * len(self.files))]
+
+        # get full name of newfile
+        if parent == '/':
+            fullName = parent + nfile
+        else:
+            fullName = parent + '/' + nfile
+
+        dprint('try createSoftLink(%s %s %s)' % (target, nfile, parent))
+        inum = self.createSoftLink(target, nfile, parent)
+        if inum >= 0:
+            self.files.append(fullName)
+            self.nameToInum[fullName] = inum
+            if printOps:
+                print 'soft link("%s", "%s");' % (target, fullName)
+            return 0
+        return -1
 
     def doLink(self):
         dprint('doLink')
@@ -481,8 +520,8 @@ class fs:
                     rc = self.doDelete()
                     dprint('doDelete rc:%d' % rc)
                 elif r < 0.7:
-                    rc = self.doLink()
-                    dprint('doLink rc:%d' % rc)
+                    rc = self.doSoftLink()
+                    dprint('doSoftLink rc:%d' % rc)
                 else:
                     if random.random() < 0.75:
                         rc = self.doCreate('f')
